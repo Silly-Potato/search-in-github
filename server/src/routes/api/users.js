@@ -18,18 +18,18 @@ api.get("/:username", async (request, response) => {
     try {
       console.log(`fetch: https://api.github.com/users/${username}`);
       console.log("fetching user from github...");
-      const response = await fetch(`https://api.github.com/users/${username}`);
-      const body = await response.json();
+      const gitresponse = await fetch(`https://api.github.com/users/${username}`);
+      const body = await gitresponse.json();
       console.log("Body: " + body.message);
       if (body.message == "Not Found") {
-        res.json({
+        response.json({
           data: {
             user: "User do not exist !"
           }
         });
       } else {
         console.log("creating user in prisma...")
-        await prisma.user.create({
+        let jsondata = {
           data: {
             login: body.login,
             node_id: body.node_id,
@@ -63,22 +63,20 @@ api.get("/:username", async (request, response) => {
             created_at: body.created_at,
             updated_at: body.updated_at
           }
-        })
-        response.json({
-          data: { data }
-        })
+        }
+        await prisma.user.create(jsondata);
+        response.json(jsondata);
       }
-    }
-    catch {
+    } catch {
       console.log("Error, try again later.")
       response.json({
         data: {
-          message: "Limited github API rate, try again later."
+          message: "Error, check if github API isn't limited for this ip."
         }
       })
     }
-  }
-  else {
+  } else {
+    console.log("User already exists in database.")
     response.json({
       data: { user }
     })
