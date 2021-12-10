@@ -4,16 +4,15 @@ import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   const fetchUser = async (username) => {
-    const { API_URL } = process.env;
+    //const { API_URL = "http://localhost:8000" } = process.env;
+    const { API_URL = "http://localhost:8000" } = process.env;
     console.log(API_URL)
     const response = await fetch(`${API_URL}/api/users/${username}`);
     const data = await response.json();
-
-    console.log("ahaha");
     console.log(data);
   }
 
-  fetchUser("pu-erh");
+  fetchUser("sosniik");
 
   return (
     <View style={styles.container}>

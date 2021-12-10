@@ -5,6 +5,7 @@ import routes from "./routes";
 export function launch(port) {
   const application = express();
 
+  console.log("Port: " + port);
   application.use(cors());
   application.use("/", routes);
 
