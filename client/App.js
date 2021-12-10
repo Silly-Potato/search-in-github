@@ -16,8 +16,8 @@ export default function App() {
   const [login, set_login] = useState("");
   const [repos, set_repos] = useState("");
   const [followers, set_followers] = useState("");
-
-  let input_user;
+  const [bio, set_bio] = useState("");
+  const [input_user, set_input] = useState("");
 
   return (
     <View style={styles.globalContainer}>
@@ -27,18 +27,30 @@ export default function App() {
         placeholderTextColor="#9a73ef"
         autoCapitalize="none"
         onChangeText={(text) => {
-          input_user = text;
-        }} />
+          set_input(text);
+        }}
+        value={input_user}
+      />
       <TouchableOpacity
         style={styles.submitButton}
         onPress={async () => {
-          const jsondata = await fetchUser(input_user);
           try {
-            set_uri_avatar(jsondata.data.user.avatar_url);
-            set_name(`Name: ${jsondata.data.user.name}`);
-            set_repos(`Repositories: ${jsondata.data.user.public_repos}`);
-            set_followers(`Followers: ${jsondata.data.user.followers}`);
-            set_login(`${jsondata.data.user.login}`);
+            const jsondata = await fetchUser(input_user);
+            if (jsondata.data.message == undefined) {
+              set_uri_avatar(jsondata.data.user.avatar_url);
+              set_name(jsondata.data.user.name);
+              set_repos(jsondata.data.user.public_repos);
+              set_followers(jsondata.data.user.followers);
+              set_login(jsondata.data.user.login);
+              set_bio(jsondata.data.user.bio);
+            } else {
+              set_uri_avatar(undefined);
+              set_name(undefined);
+              set_repos(undefined);
+              set_followers(undefined);
+              set_login(undefined);
+              set_bio(jsondata.data.message);
+            }
           } catch (e) {
             console.log("error");
           }
@@ -47,31 +59,38 @@ export default function App() {
       >
         <Text style={styles.submitButtonText}> Fetch User! </Text>
       </TouchableOpacity>
-      <View style={styles.userContainer}>
-        <Text style={styles.loginText}> {login} </Text>
+      <Text style={styles.loginText}> {login} </Text>
+      <Text style={styles.bioText}> {bio} </Text>
+      <View style={{
+        alignContent: 'center',
+        alignItems: 'center'
+      }}>
+        <br></br>
         <Image key={Date.now()} source={{ uri: uri_avatar }}
-          style={{ width: 200, height: 200, borderRadius: "50%" }}
+          style={{ width: 200, height: 200, borderRadius: "50%", alignContent: 'center' }}
         />
-        <Text style={styles.userText}> {name} </Text>
-        <Text style={styles.userText}> {repos} </Text>
-        <Text style={styles.userText}> {followers} </Text>
+        <br></br>
       </View>
+      <Text>
+        <Text style={styles.titleText}> Name :</Text>
+        <Text style={styles.valueText}>  {name}</Text>
+      </Text>
+      <Text>
+        <Text style={styles.titleText}> Repositories :</Text>
+        <Text style={styles.valueText}>  {repos}</Text>
+      </Text>
+      <Text>
+        <Text style={styles.titleText}> Followers :</Text>
+        <Text style={styles.valueText}>  {followers}</Text>
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  userContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    justifyContent: 'aligned',
-  },
   globalContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingTop: 23
   },
   input: {
@@ -89,12 +108,31 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: 'white'
   },
-  userText: {
-    color: 'black'
+  valueText: {
+    textAlign: 'right',
+    color: 'black',
+    alignSelf: 'stretch',
+    fontSize: 20
   },
   loginText: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'black'
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold',
+    alignSelf: 'stretch',
+    fontSize: 50
+  },
+  bioText: {
+    textAlign: 'center',
+    color: 'black',
+    fontStyle: 'italic',
+    alignSelf: 'stretch',
+    fontSize: 20
+  },
+  titleText: {
+    textAlign: 'left',
+    color: 'black',
+    fontWeight: 'bold',
+    alignSelf: 'stretch',
+    fontSize: 20
   }
 });

@@ -11,7 +11,7 @@ api.get("/:username", async (request, response) => {
   console.log(`Starting fetch, username param: ${username}`)
   let user = await prisma.user.findUnique({
     where: {
-      login: username
+      std_login: username.toLowerCase()
     }
   });
 
@@ -25,13 +25,16 @@ api.get("/:username", async (request, response) => {
       if (body.message == "Not Found") {
         response.json({
           data: {
-            user: `User ${username} does not exist !`
+            message: `User ${username} does not exist !`
           }
         });
       } else {
         console.log("creating user in prisma...")
+        let standard_login = body.login;
+        standard_login = standard_login.toLowerCase();
         let jsondata = {
           data: {
+            std_login: standard_login,
             login: body.login,
             node_id: body.node_id,
             avatar_url: body.avatar_url,
@@ -73,8 +76,8 @@ api.get("/:username", async (request, response) => {
           }
         });
       }
-    } catch {
-      console.log("Error, try again later.")
+    } catch (e) {
+      console.log("Error: " + e.message)
       response.json({
         data: {
           message: "Error, check if github API isn't limited for this ip."
