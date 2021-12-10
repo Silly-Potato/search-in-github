@@ -8,6 +8,7 @@ const fetch = require('node-fetch');
 
 api.get("/:username", async (request, response) => {
   const { username } = request.params;
+  console.log(`Starting fetch, username param: ${username}`)
   const user = await prisma.user.findUnique({
     where: {
       login: username
@@ -20,11 +21,11 @@ api.get("/:username", async (request, response) => {
       console.log("fetching user from github...");
       const gitresponse = await fetch(`https://api.github.com/users/${username}`);
       const body = await gitresponse.json();
-      console.log("Body: " + body.message);
+      console.log("Body message: " + body.message);
       if (body.message == "Not Found") {
         response.json({
           data: {
-            user: "User do not exist !"
+            user: `User ${username} does not exist !`
           }
         });
       } else {
