@@ -14,7 +14,7 @@ api.get("/:username", async(request, response) => {
     }
   });
 
-  console.log(user);
+  console.log("Prisma user: " + user.name);
   if (user == null) {
     console.log(`fetch: https://api.github.com/users/${username}`);
     console.log("fetching user from github...");
@@ -27,8 +27,8 @@ api.get("/:username", async(request, response) => {
                 user : "User do not exist !"
             }
         });
-      }
   } else {
+    console.log("creating user in prisma...")
     await prisma.user.create({
       data : {
           login:                  body.login,
@@ -65,9 +65,14 @@ api.get("/:username", async(request, response) => {
         }
     })
     response.json({
-        data: { data },
+        data: { data }
     })
-  }
+  }}
+  else{
+    response.json({
+        data: { user },
+    })
+}
 });
 
 export default api;
