@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'reac
 
 export default function App() {
   const fetchUser = async (username) => {
-    const { API_URL = "http://localhost:8000" } = process.env;
+    const { API_URL = "http://localhost:4242" } = process.env;
     console.log(API_URL)
     const response = await fetch(`${API_URL}/api/users/${username}`);
     const data = await response.json();
