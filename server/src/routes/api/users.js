@@ -9,7 +9,7 @@ const fetch = require('node-fetch');
 api.get("/:username", async (request, response) => {
   const { username } = request.params;
   console.log(`Starting fetch, username param: ${username}`)
-  const user = await prisma.user.findUnique({
+  let user = await prisma.user.findUnique({
     where: {
       login: username
     }
@@ -66,7 +66,12 @@ api.get("/:username", async (request, response) => {
           }
         }
         await prisma.user.create(jsondata);
-        response.json(jsondata);
+        user = jsondata.data
+        response.json({
+          data: {
+            user
+          }
+        });
       }
     } catch {
       console.log("Error, try again later.")
